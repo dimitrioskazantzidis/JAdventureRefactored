@@ -7,10 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,8 +22,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonPrimitive;
+
 import com.google.gson.reflect.TypeToken;
 import com.jadventure.game.DeathException;
 import com.jadventure.game.GameBeans;
@@ -56,7 +52,7 @@ public class Player extends Entity {
     private int xp;
     /** Player type */
     private String type;
-    private static HashMap<String, Integer>characterLevels = new HashMap<String, Integer>();
+    private static HashMap<String, Integer>characterLevels = new HashMap<>();
 
     public Player() {
     }
@@ -479,33 +475,81 @@ public class Player extends Entity {
     }
 
     public void attack(String opponentName) throws DeathException {
-        Monster monsterOpponent = null;
-        NPC npcOpponent = null;
-        List<Monster> monsters = getLocation().getMonsters();
-        List<NPC> npcs = getLocation().getNpcs();
-        for (int i = 0; i < monsters.size(); i++) {
-             if (monsters.get(i).monsterType.equalsIgnoreCase(opponentName)) {
-                 monsterOpponent = monsters.get(i);
-             }
-        }
-        for (int i=0; i < npcs.size(); i++) {
-            if (npcs.get(i).getName().equalsIgnoreCase(opponentName)) {
-                npcOpponent = npcs.get(i);
-            }
-        }
-        if (monsterOpponent != null) {
+         
+		NPC npcOpponent = new NPC();	
+		Monster monsterOpponent = monsterOpponent(opponentName);
+		
+		if (monsterOpponent != null) {
             monsterOpponent.setName(monsterOpponent.monsterType);
             new BattleMenu(monsterOpponent, this);
-        } else if (npcOpponent != null) {
+        } else if (npcOpponent.npcOpponent(opponentName) != null) {
             new BattleMenu(npcOpponent, this);
         } else {
              QueueProvider.offer("Opponent not found");
         }
     }
+    
+    private Monster monsterOpponent(String opponentName) {
+		Monster monsterOpponent = null;
+		List<Monster> monsters = getLocation().getMonsters();
+		for (int i = 0; i < monsters.size(); i++) {
+			if (monsters.get(i).monsterType.equalsIgnoreCase(opponentName)) {
+				monsterOpponent = monsters.get(i);
+			}
+		}
+		return monsterOpponent;
+	}
+
+	
+
+	
 
     public boolean hasItem(Item item) {
         List<Item> searchEquipment = searchEquipment(item.getName(), getEquipment());
         List<Item> searchStorage = searchItem(item.getName(), getStorage());
         return !(searchEquipment.size() == 0 && searchStorage.size() == 0);
     }
+
+	public void viewStats() {
+		QueueProvider.offer("\nWhat is your command? ex. View stats(vs), " + "View Backpack(vb), View Equipment(ve) ");
+		String input = QueueProvider.take();
+		switch (input) {
+		case "vs":
+		case "viewstats":
+			getStats();
+			break;
+		case "ve":
+		case "viewequipped":
+			printEquipment();
+			break;
+		case "vb":
+		case "viewbackpack":
+			printStorage();
+			break;
+		case "back":
+		case "exit":
+			break;
+		default:
+			viewStats();
+			break;
+		}
+	}
+
+	public void unequip() {
+		printEquipment();
+		QueueProvider.offer("What item do you want to unequip?");
+		String itemName = QueueProvider.take();
+		if (!itemName.equalsIgnoreCase("back")) {
+			dequipItem(itemName);
+		}
+	}
+
+	public void equip() {
+		printStorage();
+		QueueProvider.offer("What item do you want to use?");
+		String itemName = QueueProvider.take();
+		if (!itemName.equalsIgnoreCase("back")) {
+			equipItem(itemName);
+		}
+	}
 }

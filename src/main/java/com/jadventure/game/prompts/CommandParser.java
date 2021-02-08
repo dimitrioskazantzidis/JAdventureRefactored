@@ -2,7 +2,6 @@ package com.jadventure.game.prompts;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.TreeMap;
 
 import com.jadventure.game.DeathException;
@@ -21,7 +20,7 @@ public class CommandParser {
 
     public CommandParser(Player player){
         this.player = player;
-        commandMap = new TreeMap<String, Method>();
+        commandMap = new TreeMap<>();
         initCommandMap();
     }
 

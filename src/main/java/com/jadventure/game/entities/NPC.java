@@ -31,6 +31,21 @@ public class NPC extends Entity {
         enemies = new ArrayList<>();
         this.id = entityID;
     }
+    
+    public NPC npcOpponent(String opponentName) {
+		NPC npcOpponent = null;
+		Player location = new Player();
+		List<NPC> npcs = location.getLocation().getNpcs();
+		for (int i = 0; i < npcs.size(); i++) {
+			if (npcs.get(i).getName().equalsIgnoreCase(opponentName)) {
+				npcOpponent = npcs.get(i);
+			}
+		}
+		return npcOpponent;
+	}
+    
+    
+   
 
     public void setItems(JsonObject json, int itemLimit, int i) {
         JsonArray items = json.get("items").getAsJsonArray();

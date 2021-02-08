@@ -1,6 +1,7 @@
 package com.jadventure.game.monsters;
 
 import com.jadventure.game.entities.NPC;
+
 import com.jadventure.game.items.Item;
 import com.jadventure.game.GameBeans;
 import com.jadventure.game.repository.ItemRepository;
@@ -29,6 +30,9 @@ public abstract class Monster extends NPC {
         }
         return false;
     }
+    
+    
+    
 
     public void addRandomItems(int playerLevel, String... children) {
         List<String> itemList = Arrays.asList(children);

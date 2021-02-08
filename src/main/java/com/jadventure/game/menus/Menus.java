@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class Menus {
     protected List<MenuItem> menuItems = new ArrayList<>();
-    protected Map<String, MenuItem> commandMap = new HashMap<String, MenuItem>();
+    protected Map<String, MenuItem> commandMap = new HashMap<>();
 
     public MenuItem displayMenu(List<MenuItem> m) {
         int i = 1;

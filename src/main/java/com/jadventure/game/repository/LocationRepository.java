@@ -3,17 +3,13 @@ package com.jadventure.game.repository;
 import com.jadventure.game.entities.NPC;
 import com.jadventure.game.items.Item;
 import com.jadventure.game.navigation.ILocation;
-import com.jadventure.game.navigation.Location;
-import com.jadventure.game.navigation.LocationType;
 import com.jadventure.game.navigation.Coordinate;
-import com.jadventure.game.GameBeans;
 import com.jadventure.game.QueueProvider;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.google.gson.Gson;
 
 import java.nio.file.Files;
@@ -34,9 +30,8 @@ import java.util.List;
  * It also provides methods for getting the initial location and the current location.
  */
 public class LocationRepository {
-    private ItemRepository itemRepo = GameBeans.getItemRepository();
-    private NpcRepository npcRepo = GameBeans.getNpcRepository();
-    private String fileName;
+    private LocationRepositoryProduct locationRepositoryProduct = new LocationRepositoryProduct();
+	private String fileName;
     private Map<Coordinate, ILocation> locations;
     private static LocationRepository instance;
 
@@ -72,7 +67,7 @@ public class LocationRepository {
             Reader reader = new FileReader(fileName);
             JsonObject json = parser.parse(reader).getAsJsonObject();
             for(Map.Entry<String, JsonElement> entry: json.entrySet()) {
-                locations.put(new Coordinate(entry.getKey()), loadLocation(entry.getValue().getAsJsonObject()));
+                locations.put(new Coordinate(entry.getKey()), locationRepositoryProduct.loadLocation(entry.getValue().getAsJsonObject()));
             }
             reader.close();
         } catch (FileNotFoundException ex) {
@@ -81,33 +76,6 @@ public class LocationRepository {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private ILocation loadLocation(JsonObject json) {
-        Coordinate coordinate =
-            new Coordinate(json.get("coordinate").getAsString());
-        String title = json.get("title").getAsString();
-        String description = json.get("description").getAsString();
-        LocationType locationType =
-            LocationType.valueOf(json.get("locationType").getAsString());
-        ILocation location = new Location(coordinate, title, description,
-                locationType);
-        location.setDangerRating(json.get("danger").getAsInt());
-        if (json.has("items")) {
-            List<String> items = new Gson().fromJson(json.get("items"),
-                    new TypeToken<List<String>>(){}.getType());
-            for (String id : items) {
-                location.addItem(itemRepo.getItem(id));
-            }
-        }
-        if (json.has("npcs")) {
-            List<String> npcs = new Gson().fromJson(json.get("npcs"),
-                    new TypeToken<List<String>>(){}.getType());
-            for (String npc : npcs) {
-                location.addNpc(npcRepo.getNpc(npc));
-            }
-        }
-        return location;
     }
 
     public void writeLocations() {

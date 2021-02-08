@@ -63,14 +63,8 @@ public class Storage {
      * Adds an ItemStack to the items list.
      */
     public void addItem(ItemStack itemStack) {
-        boolean canBeAdded = true;
-        if (hasMaxWeight()) {
-            double totalWeight = itemStack.getItem().getWeight() * itemStack.getAmount();
-            if (totalWeight > maxWeight) {
-                canBeAdded = false;
-            }
-        }
-        if (canBeAdded) {
+        boolean canBeAdded = canBeAdded(itemStack);
+		if (canBeAdded) {
             if (contains(itemStack)) {
                 ItemStack sameType = this.getSameType(itemStack);
                 this.itemStacks.remove(sameType);
@@ -80,6 +74,16 @@ public class Storage {
             }
         }
     }
+	private boolean canBeAdded(ItemStack itemStack) {
+		boolean canBeAdded = true;
+		if (hasMaxWeight()) {
+			double totalWeight = itemStack.getItem().getWeight() * itemStack.getAmount();
+			if (totalWeight > maxWeight) {
+				canBeAdded = false;
+			}
+		}
+		return canBeAdded;
+	}
 
     private boolean hasMaxWeight() {
         return !(maxWeight == -1);
