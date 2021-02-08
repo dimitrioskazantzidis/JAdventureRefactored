@@ -510,46 +510,7 @@ public class Player extends Entity {
         return !(searchEquipment.size() == 0 && searchStorage.size() == 0);
     }
 
-	public void viewStats() {
-		QueueProvider.offer("\nWhat is your command? ex. View stats(vs), " + "View Backpack(vb), View Equipment(ve) ");
-		String input = QueueProvider.take();
-		switch (input) {
-		case "vs":
-		case "viewstats":
-			getStats();
-			break;
-		case "ve":
-		case "viewequipped":
-			printEquipment();
-			break;
-		case "vb":
-		case "viewbackpack":
-			printStorage();
-			break;
-		case "back":
-		case "exit":
-			break;
-		default:
-			viewStats();
-			break;
-		}
-	}
+	
 
-	public void unequip() {
-		printEquipment();
-		QueueProvider.offer("What item do you want to unequip?");
-		String itemName = QueueProvider.take();
-		if (!itemName.equalsIgnoreCase("back")) {
-			dequipItem(itemName);
-		}
-	}
-
-	public void equip() {
-		printStorage();
-		QueueProvider.offer("What item do you want to use?");
-		String itemName = QueueProvider.take();
-		if (!itemName.equalsIgnoreCase("back")) {
-			equipItem(itemName);
-		}
-	}
+	
 }
